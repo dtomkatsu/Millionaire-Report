@@ -739,14 +739,14 @@
         const lastTotal = wealthTotal[wealthTotal.length - 1];
         aggregateTotalEl.textContent = 'Aggregate Total: $' + lastTotal.toFixed(1) + 'B';
 
-        // Custom plugin for 2017 tax increase annotation
-        const taxIncreasePlugin = {
-            id: 'taxIncrease',
+        // Tax increase annotation using Chart.js annotation plugin
+        const taxIncreaseAnnotation = {
+            id: 'taxIncreaseAnnotation',
             afterDraw: function(chart) {
                 const ctx = chart.ctx;
                 const area = chart.chartArea;
-                const meta = chart.getDatasetMeta(0); // Use first dataset for positioning
-                const dataIndex = years.indexOf(2017); // Find 2017 index
+                const meta = chart.getDatasetMeta(0);
+                const dataIndex = years.indexOf(2017);
                 
                 if (dataIndex === -1) return;
                 
@@ -754,9 +754,9 @@
                 const yBottom = area.bottom;
                 const yMiddle = area.top + (area.bottom - area.top) / 2;
                 
-                // Draw dotted vertical line (half height from bottom)
+                // Draw dotted vertical line
                 ctx.save();
-                ctx.strokeStyle = '#e74c3c';
+                ctx.strokeStyle = '#2a6b4f';
                 ctx.lineWidth = 2;
                 ctx.setLineDash([5, 5]);
                 ctx.beginPath();
@@ -764,19 +764,19 @@
                 ctx.lineTo(x, yMiddle);
                 ctx.stroke();
                 
-                // Draw "taxes increased" text above line
-                ctx.fillStyle = '#e74c3c';
+                // Draw label
+                ctx.fillStyle = '#2a6b4f';
                 ctx.font = 'bold 12px Inter, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('taxes increased', x, yMiddle - 10);
+                ctx.fillText('tax increase', x, yMiddle - 10);
                 ctx.restore();
                 
-                // Store line position for interaction
+                // Store position for interaction
                 chart.taxIncreaseLine = { x, yBottom, yMiddle, width: 20 };
             }
         };
 
-        Chart.register(taxIncreasePlugin);
+        Chart.register(taxIncreaseAnnotation);
 
         const wealthChart = new Chart(wealthCtx, {
             type: 'line',
@@ -843,9 +843,10 @@
                     if (wealthChart.taxIncreaseLine) {
                         const rect = wealthChart.canvas.getBoundingClientRect();
                         const x = event.clientX - rect.left;
+                        const y = event.clientY - rect.top;
                         const line = wealthChart.taxIncreaseLine;
                         
-                        if (Math.abs(x - line.x) < line.width) {
+                        if (Math.abs(x - line.x) < line.width && y >= line.yMiddle && y <= line.yBottom) {
                             showTaxPopup(event.clientX, event.clientY);
                             return;
                         }
@@ -903,26 +904,43 @@
             }, 200);
         }
 
-        // Add hover and click handlers for wealth chart
-        wealthChart.canvas.addEventListener('mousemove', (e) => {
+        // Add hover and click handlers for wealth chart with higher priority
+        const handleTaxLineHover = (e) => {
             if (wealthChart.taxIncreaseLine) {
                 const rect = wealthChart.canvas.getBoundingClientRect();
                 const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 const line = wealthChart.taxIncreaseLine;
                 
-                if (Math.abs(x - line.x) < line.width) {
+                // Check if mouse is near the vertical line
+                if (Math.abs(x - line.x) < line.width && y >= line.yMiddle && y <= line.yBottom) {
                     wealthChart.canvas.style.cursor = 'pointer';
                     showTaxPopup(e.clientX, e.clientY);
+                    e.stopPropagation(); // Prevent chart tooltip
                 } else {
                     wealthChart.canvas.style.cursor = 'default';
                     hideTaxPopup();
                 }
             }
-        });
+        };
 
-        wealthChart.canvas.addEventListener('mouseleave', () => {
-            hideTaxPopup();
-        });
+        const handleTaxLineClick = (e) => {
+            if (wealthChart.taxIncreaseLine) {
+                const rect = wealthChart.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const line = wealthChart.taxIncreaseLine;
+                
+                if (Math.abs(x - line.x) < line.width && y >= line.yMiddle && y <= line.yBottom) {
+                    showTaxPopup(e.clientX, e.clientY);
+                    e.stopPropagation(); // Prevent chart click
+                }
+            }
+        };
+
+        wealthChart.canvas.addEventListener('mousemove', handleTaxLineHover, { capture: true });
+        wealthChart.canvas.addEventListener('mouseleave', hideTaxPopup, { capture: true });
+        wealthChart.canvas.addEventListener('click', handleTaxLineClick, { capture: true });
 
         // ── Chart Switching Logic ──
         const chartSwitcher = document.getElementById('chartSwitcher');
