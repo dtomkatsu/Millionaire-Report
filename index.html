@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millionaires Report — Hawai'i Wealth Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f5f7f0;
+            color: #2a2a2a;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #1a3c34;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: #6b8f71;
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        /* ── Infographic Summary Banner ── */
+        .infographic-banner {
+            max-width: 960px;
+            margin: 0 auto 2.5rem;
+            background: linear-gradient(135deg, #1a3c34 0%, #2a6b4f 100%);
+            border-radius: 20px;
+            padding: 2.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 32px rgba(26, 60, 52, 0.25);
+            position: relative;
+            overflow: visible;
+        }
+
+        .infographic-banner::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+
+        .infographic-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -30px; left: -30px;
+            width: 120px; height: 120px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+        }
+
+        .info-segment {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.15rem;
+            font-weight: 500;
+        }
+
+        .info-highlight {
+            color: #ffffff;
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -1px;
+            padding: 0 0.15rem;
+            transition: transform 0.25s ease;
+            display: inline-block;
+            cursor: default;
+        }
+
+        .info-highlight:hover {
+            transform: scale(1.12);
+        }
+
+        .connector {
+            color: rgba(255,255,255,0.75);
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding: 0 1.2rem;
+            margin-left: 3rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            flex-shrink: 0;
+        }
+
+        .connector .money-icon {
+            width: 28px;
+            height: 28px;
+            opacity: 0.8;
+        }
+
+        .wealth-amount {
+            color: #a8e6b0;
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -1px;
+            transition: transform 0.25s ease;
+            display: inline-block;
+            cursor: default;
+            min-width: 8ch;
+            text-align: right;
+        }
+
+        .wealth-amount:hover {
+            transform: scale(1.12);
+        }
+
+        .wealth-unit {
+            color: rgba(168, 230, 176, 0.7);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-left: 0.2rem;
+        }
+
+        .coin-stack {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 0;
+        }
+
+        .coin {
+            display: block;
+            height: 7px;
+            border-radius: 50%;
+            border: 2px solid #4ade80;
+            background: rgba(74, 222, 128, 0.3);
+            margin: 0;
+        }
+
+        .coin:nth-child(1) { width: 18px; }
+        .coin:nth-child(2) { width: 20px; }
+        .coin:nth-child(3) { width: 22px; }
+
+        /* ── Dropdown in banner ── */
+        .dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+            z-index: 10;
+        }
+
+        .dropdown-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1.5px solid rgba(255,255,255,0.25);
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0.35rem 0.9rem;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: all 0.2s;
+            min-width: 14rem;
+            text-align: left;
+        }
+
+        .dropdown-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .dropdown-btn::after {
+            content: ' ▾';
+            font-size: 0.85em;
+            opacity: 0.7;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(26, 60, 52, 0.2);
+            z-index: 200;
+            min-width: 280px;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-menu.open { display: block; }
+
+        .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 1.2rem;
+            text-align: left;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            color: #2a2a2a;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s;
+            font-weight: 500;
+        }
+
+        .dropdown-menu button:hover { background: #f0f7f2; }
+        .dropdown-menu button.active { color: #2a6b4f; font-weight: 700; }
+
+        /* ── Charts ── */
+        .chart-container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(26, 60, 52, 0.07);
+            padding: 2rem 2rem 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .chart-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a3c34;
+        }
+
+        .chart-header .subtitle {
+            font-size: 0.82rem;
+            color: #8fa89a;
+            font-weight: 500;
+        }
+
+        .year-select {
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.3rem 0.7rem;
+            border: 1.5px solid #c8d9ce;
+            border-radius: 8px;
+            color: #1a3c34;
+            background: #f5f7f0;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .year-select:hover { border-color: #2a6b4f; }
+
+        .chart-wrapper {
+            position: relative;
+            height: 420px;
+        }
+
+        .legend-hint {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #a3b8aa;
+            margin-top: 0.75rem;
+        }
+
+        .source {
+            text-align: center;
+            font-size: 0.72rem;
+            color: #a3b8aa;
+            margin-top: 1.5rem;
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Budget Callout ── */
+        .budget-callout {
+            max-width: 960px;
+            margin: -1rem auto 2.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .budget-callout-inner {
+            width: 300px;
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 1rem 1.4rem;
+            box-shadow: 0 2px 16px rgba(26, 60, 52, 0.07);
+            border-left: 4px solid #2a6b4f;
+            text-align: center;
+        }
+
+        .budget-line1 {
+            font-size: 1rem;
+            color: #2a2a2a;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .budget-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1a3c34;
+            padding: 0 0.15rem;
+        }
+
+        .budget-line2 {
+            font-size: 0.85rem;
+            color: #6b8f71;
+            font-weight: 500;
+            margin-top: 0.15rem;
+        }
+
+        /* ── Narrative Section ── */
+        .narrative-section {
+            max-width: 960px;
+            margin: 0 auto 2.5rem;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(26, 60, 52, 0.07);
+            padding: 2rem 2.5rem;
+        }
+
+        .narrative-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1a3c34;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e8f0ea;
+        }
+
+        .narrative-point {
+            margin-bottom: 1.25rem;
+        }
+
+        .narrative-point-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .narrative-point-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a3c34, #2a6b4f);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .narrative-point-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a3c34;
+        }
+
+        .narrative-point p {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: #3a3a3a;
+            margin-left: 2.85rem;
+        }
+
+        .narrative-source {
+            display: block;
+            font-size: 0.75rem;
+            color: #8fa89a;
+            margin-top: 0.5rem;
+            margin-left: 2.85rem;
+        }
+
+        .narrative-source a {
+            color: #2a6b4f;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .infographic-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+                padding: 1.5rem;
+            }
+            .connector { padding: 0.25rem 0; }
+            .info-highlight, .wealth-amount { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Millionaires Report</h1>
+        <p>Hawai'i Wealth Market Sizing Data &middot; 2010&ndash;2024</p>
+    </div>
+
+    <!-- Infographic Banner -->
+    <div class="infographic-banner">
+        <div class="info-segment" style="gap:0.5rem; width: 24rem; flex-shrink:0;">
+            <span class="info-text">Hawai'i has</span>
+            <span class="info-highlight" id="summaryCount">81,814</span>
+            <div class="dropdown-wrapper">
+                <button class="dropdown-btn" id="tierBtn">millionaires</button>
+                <div class="dropdown-menu" id="tierMenu">
+                    <button data-tier="all" class="active">millionaires (all)</button>
+                    <button data-tier="$1M-$20M">millionaires ($1M&ndash;$20M)</button>
+                    <button data-tier="$20M-$50M">ultra-millionaires ($20M&ndash;$50M)</button>
+                    <button data-tier="$50M+">ultra-millionaires ($50M+)</button>
+                </div>
+            </div>
+        </div>
+        <div class="connector">that hold<svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
+            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                <span class="wealth-amount" id="summaryWealth">$292.7</span>
+                <span class="info-text">in wealth</span>
+            </div>
+            <div style="position:relative;">
+                <div class="coin-stack" style="position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px;">
+                    <div class="coin"></div>
+                    <div class="coin"></div>
+                    <div class="coin"></div>
+                </div>
+                <span class="wealth-unit" style="margin:0; line-height:1.2;">billion</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Narrative Section -->
+    <div class="narrative-section">
+        <h2 class="narrative-title">Ultra-millionaires have advantages over the rest of us</h2>
+        <div class="narrative-point">
+            <div class="narrative-point-header">
+                <span class="narrative-point-number">1</span>
+                <h3>They pay low taxes on their investments</h3>
+            </div>
+            <p>Hawaiʻi is one of only nine states that taxes capital gains at a lower rate than ordinary income&mdash;effectively a loophole that almost entirely benefits the wealthy. Of taxpayers who reported capital gains in 2019, the 7.7% who earned $400,000+ received <strong>79.4% of all capital gains income</strong> in the state. Those making over $1&nbsp;million a year actually pay a <em>lower</em> effective tax rate than the income group just below them, because Hawaiʻi taxes long-term capital gains at just 7.25% versus the top marginal rate of 11%. If capital gains were taxed like regular income, the state would gain roughly <strong>$180&nbsp;million per year</strong>&mdash;with 97% paid by the top 5% of earners. The bottom 80% of taxpayers would pay nothing additional.</p>
+            <span class="narrative-source">Source: <a href="https://www.hitaxfairness.org/capital-gains" target="_blank">HI Tax Fairness Coalition &mdash; Capital Gains Tax Reform</a></span>
+        </div>
+    </div>
+
+    <!-- Budget Callout -->
+    <div class="budget-callout">
+        <div class="budget-callout-inner">
+            <div class="budget-line1">that is <span class="budget-number" id="budgetMultiple">12.4</span> x</div>
+            <div class="budget-line2">our entire state budget for 2026</div>
+        </div>
+    </div>
+
+    <!-- Bar Chart: Individuals by Tier -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <div>
+                <h2># of Individuals by Wealth Tier</h2>
+                <span class="subtitle">Hawai'i &middot; Select a year to compare tiers</span>
+            </div>
+            <select class="year-select" id="yearSelect"></select>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="individualsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Line Chart: Wealth -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <div>
+                <h2>Wealth Held by Wealthy Individuals, Billions</h2>
+                <span class="subtitle">Hawai'i, 2010&ndash;2024 (USD) &middot; Stacked area shows tiers as portions of total</span>
+            </div>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="wealthChart"></canvas>
+        </div>
+        <p class="legend-hint">Click a line to highlight it &middot; Click again to reset</p>
+    </div>
+
+    <p class="source">Source: Wealth-X / Altrata &mdash; Market Sizing Wealth Data for Hawai'i (Nov 9, 2025)</p>
+
+    <script>
+        // ── Data ──
+        const years = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024];
+
+        const individualsData = {
+            '$1M\u2013$20M':  [28801, 28276, 32043, 37933, 41121, 41187, 44731, 50833, 50374, 54437, 53425, 58904, 56745, 66976, 81814],
+            '$20M\u2013$50M': [466, 458, 516, 604, 652, 654, 706, 796, 789, 848, 835, 915, 883, 1031, 1245],
+            '$50M+': [138, 135, 152, 178, 192, 192, 208, 234, 232, 249, 246, 270, 260, 304, 365]
+        };
+
+        const wealthData = {
+            '$1M\u2013$20M':  [105.7, 103.9, 117.2, 138.0, 149.2, 149.5, 161.7, 184.1, 181.8, 196.5, 192.9, 213.3, 205.6, 241.6, 292.7],
+            '$20M\u2013$50M': [35.6, 35.0, 39.3, 45.9, 49.4, 49.6, 53.3, 61.1, 59.8, 64.8, 63.6, 70.9, 68.4, 79.9, 95.6],
+            '$50M+': [25.8, 25.4, 28.5, 33.2, 35.7, 35.9, 38.4, 44.3, 43.2, 47.0, 46.0, 51.6, 49.7, 58.2, 69.3]
+        };
+
+        const blueShades = [
+            { main: '#0c2d5e', fill: 'rgba(12, 45, 94, 0.25)',  faded: 'rgba(12, 45, 94, 0.10)' },
+            { main: '#2979d1', fill: 'rgba(41, 121, 209, 0.30)', faded: 'rgba(41, 121, 209, 0.10)' },
+            { main: '#64b5f6', fill: 'rgba(100, 181, 246, 0.35)',faded: 'rgba(100, 181, 246, 0.12)' }
+        ];
+
+        Chart.register(ChartDataLabels);
+
+        // ═══════════════════════════════════════
+        // BAR CHART — Individuals by Wealth Tier
+        // ═══════════════════════════════════════
+        const yearSelect = document.getElementById('yearSelect');
+        years.forEach(y => {
+            const opt = document.createElement('option');
+            opt.value = y; opt.textContent = y;
+            if (y === 2024) opt.selected = true;
+            yearSelect.appendChild(opt);
+        });
+
+        function getBarData(yearIdx) {
+            const tiers = Object.keys(individualsData);
+            return tiers.map((tier, i) => ({
+                label: tier,
+                data: [individualsData[tier][yearIdx]],
+                backgroundColor: blueShades[i].main,
+                borderRadius: 6,
+                barPercentage: 0.7,
+                categoryPercentage: 0.8
+            }));
+        }
+
+        const barCtx = document.getElementById('individualsChart').getContext('2d');
+        let barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: [''],
+                datasets: getBarData(years.length - 1)
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        offset: 8,
+                        font: { size: 13, weight: '700' },
+                        color: function(ctx) { return ctx.dataset.backgroundColor; },
+                        formatter: function(value) { return value.toLocaleString(); }
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            padding: 20,
+                            font: { size: 13, weight: '600' },
+                            color: '#2a2a2a'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(26, 60, 52, 0.92)',
+                        titleFont: { size: 13, weight: '600' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.raw.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { size: 11 },
+                            color: '#8fa89a',
+                            callback: function(v) {
+                                if (v >= 1000) return (v/1000).toFixed(0) + 'K';
+                                return v;
+                            }
+                        }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+
+        yearSelect.addEventListener('change', function() {
+            const idx = years.indexOf(parseInt(this.value));
+            barChart.data.datasets = getBarData(idx);
+            barChart.update();
+        });
+
+        // ═══════════════════════════════
+        // LINE CHART — Wealth (Stacked)
+        // ═══════════════════════════════
+        function buildWealthDatasets() {
+            const tiers = Object.keys(wealthData);
+            return tiers.map((tier, i) => ({
+                label: tier,
+                data: wealthData[tier],
+                borderColor: blueShades[i].main,
+                backgroundColor: blueShades[i].fill,
+                pointBackgroundColor: blueShades[i].main,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: blueShades[i].main,
+                borderWidth: 2.5,
+                pointRadius: 4,
+                pointHoverRadius: 9,
+                tension: 0.3,
+                fill: 'origin',
+                _origColor: blueShades[i].main,
+                _origFill: blueShades[i].fill,
+                _fadedColor: blueShades[i].faded,
+                _fadedFill: blueShades[i].faded
+            }));
+        }
+
+        const wealthCtx = document.getElementById('wealthChart').getContext('2d');
+        let highlightedIdx = null;
+
+        // Compute aggregate total per year (sum of all tiers)
+        const wealthTiers = Object.keys(wealthData);
+        const wealthTotal = years.map((_, yi) => {
+            return wealthTiers.reduce((sum, t) => sum + wealthData[t][yi], 0);
+        });
+
+        // Custom plugin to draw aggregate total in top-right
+        const totalAnnotationPlugin = {
+            id: 'totalAnnotation',
+            afterDraw: function(chart) {
+                const ctx = chart.ctx;
+                const area = chart.chartArea;
+                const lastTotal = wealthTotal[wealthTotal.length - 1];
+                ctx.save();
+                ctx.font = 'bold 13px Inter, sans-serif';
+                ctx.fillStyle = '#1a3c34';
+                ctx.textAlign = 'right';
+                ctx.fillText('Aggregate Total: $' + lastTotal.toFixed(1) + 'B', area.right, area.top - 8);
+                ctx.restore();
+            }
+        };
+
+        const wealthChart = new Chart(wealthCtx, {
+            type: 'line',
+            data: { labels: years, datasets: buildWealthDatasets() },
+            plugins: [totalAnnotationPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                plugins: {
+                    datalabels: {
+                        align: 'top',
+                        anchor: 'end',
+                        offset: 6,
+                        font: function() { return { size: 10, weight: '600' }; },
+                        color: function(ctx) { return ctx.dataset.borderColor; },
+                        formatter: function(v) { return '$' + v.toFixed(1) + 'B'; },
+                        display: function(ctx) {
+                            return ctx.dataIndex % 2 === 0 || ctx.dataIndex === years.length - 1;
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: { size: 13, weight: '600' },
+                            color: '#2a2a2a'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(26, 60, 52, 0.92)',
+                        titleFont: { size: 13, weight: '600' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': $' + ctx.raw.toFixed(1) + 'B';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 12 }, color: '#8fa89a' }
+                    },
+                    y: {
+                        stacked: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            font: { size: 12 },
+                            color: '#8fa89a',
+                            callback: function(v) { return '$' + v + 'B'; }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Wealth (USD Billions)',
+                            font: { size: 12, weight: '500' },
+                            color: '#8fa89a'
+                        }
+                    }
+                },
+                onClick: function(event, elements) {
+                    if (elements.length === 0) return;
+                    const ci = elements[0].datasetIndex;
+                    if (highlightedIdx === ci) {
+                        wealthChart.data.datasets.forEach(ds => {
+                            ds.borderColor = ds._origColor;
+                            ds.backgroundColor = ds._origFill;
+                            ds.pointBackgroundColor = ds._origColor;
+                            ds.borderWidth = 2.5;
+                            ds.pointRadius = 4;
+                        });
+                        highlightedIdx = null;
+                    } else {
+                        wealthChart.data.datasets.forEach((ds, i) => {
+                            if (i === ci) {
+                                ds.borderColor = ds._origColor;
+                                ds.backgroundColor = ds._origFill;
+                                ds.pointBackgroundColor = ds._origColor;
+                                ds.borderWidth = 4;
+                                ds.pointRadius = 6;
+                            } else {
+                                ds.borderColor = ds._fadedColor;
+                                ds.backgroundColor = ds._fadedFill;
+                                ds.pointBackgroundColor = ds._fadedColor;
+                                ds.borderWidth = 1.5;
+                                ds.pointRadius = 2;
+                            }
+                        });
+                        highlightedIdx = ci;
+                    }
+                    wealthChart.update();
+                }
+            }
+        });
+
+        // ── Summary card logic ──
+        const STATE_BUDGET = 23.7; // $23.7B in 2026
+
+        const summaryMapping = {
+            'all':       { label: 'millionaires',                         count: 81814, wealth: 292.7 },
+            '$1M-$20M':  { label: 'millionaires ($1M\u2013$20M)',        count: 81814, wealth: 292.7 },
+            '$20M-$50M': { label: 'ultra-millionaires ($20M\u2013$50M)', count: 1245,  wealth: 95.6  },
+            '$50M+':     { label: 'ultra-millionaires ($50M+)',           count: 365,   wealth: 69.3  }
+        };
+
+        const tierBtn = document.getElementById('tierBtn');
+        const tierMenu = document.getElementById('tierMenu');
+        const summaryCount = document.getElementById('summaryCount');
+        const summaryWealth = document.getElementById('summaryWealth');
+        const budgetMultiple = document.getElementById('budgetMultiple');
+
+        // ── Count-up animation ──
+        function animateValue(el, start, end, duration, formatter) {
+            const startTime = performance.now();
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = start + (end - start) * eased;
+                el.textContent = formatter(current);
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        function updateSummary(info) {
+            tierBtn.textContent = info.label;
+            summaryCount.textContent = info.count.toLocaleString();
+            animateValue(summaryWealth, 0, info.wealth, 1000, v => '$' + v.toFixed(1));
+            budgetMultiple.textContent = (info.wealth / STATE_BUDGET).toFixed(1);
+        }
+
+        // Initial animation on load
+        updateSummary(summaryMapping['all']);
+
+        tierBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            tierMenu.classList.toggle('open');
+        });
+
+        document.addEventListener('click', () => tierMenu.classList.remove('open'));
+        tierMenu.addEventListener('click', (e) => e.stopPropagation());
+
+        tierMenu.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tier = btn.dataset.tier;
+                const info = summaryMapping[tier];
+                updateSummary(info);
+                tierMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tierMenu.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
