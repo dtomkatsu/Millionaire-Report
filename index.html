@@ -107,10 +107,9 @@
             font-size: 1.4rem;
             font-weight: 700;
             padding: 0 1.2rem;
-            margin-left: 3rem;
+            transform: translateX(3rem);
             letter-spacing: 0.5px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             gap: 0.3rem;
             flex-shrink: 0;
@@ -120,6 +119,33 @@
             width: 28px;
             height: 28px;
             opacity: 0.8;
+        }
+
+        .hold-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .circle-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            margin-top: -2px;
+        }
+
+        .circle-animation circle {
+            animation: drawCircle 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes drawCircle {
+            to {
+                stroke-dashoffset: 0;
+            }
         }
 
         .wealth-amount {
@@ -432,10 +458,13 @@
 
     <!-- Infographic Banner -->
     <div class="infographic-banner">
-        <div class="info-segment" style="gap:0.5rem; width: 24rem; flex-shrink:0;">
-            <span class="info-text">Hawai'i has</span>
-            <span class="info-highlight" id="summaryCount">81,814</span>
-            <div class="dropdown-wrapper">
+        <div class="info-segment" style="flex-direction:column; align-items:flex-start; width: 24rem; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="info-text">Hawai'i</span>
+                <span class="info-text">has</span>
+                <span class="info-highlight" id="summaryCount">81,814</span>
+            </div>
+            <div class="dropdown-wrapper" style="margin-left: 6.5rem;">
                 <button class="dropdown-btn" id="tierBtn">millionaires</button>
                 <div class="dropdown-menu" id="tierMenu">
                     <button data-tier="all" class="active">millionaires (all)</button>
@@ -445,7 +474,7 @@
                 </div>
             </div>
         </div>
-        <div class="connector">that hold<svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="connector">that <span class="hold-wrapper">hold<svg class="circle-animation" viewBox="0 0 280 120" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="140" cy="60" r="56" stroke="rgba(168,230,176,0.6)" stroke-width="2" fill="none" stroke-dasharray="352" stroke-dashoffset="352"/></svg></span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
                 <span class="wealth-amount" id="summaryWealth">$292.7</span>
@@ -783,7 +812,7 @@
         const STATE_BUDGET = 23.7; // $23.7B in 2026
 
         const summaryMapping = {
-            'all':       { label: 'millionaires',                         count: 81814, wealth: 292.7 },
+            'all':       { label: 'millionaires',                         count: 83424, wealth: 457.6 },
             '$1M-$20M':  { label: 'millionaires ($1M\u2013$20M)',        count: 81814, wealth: 292.7 },
             '$20M-$50M': { label: 'ultra-millionaires ($20M\u2013$50M)', count: 1245,  wealth: 95.6  },
             '$50M+':     { label: 'ultra-millionaires ($50M+)',           count: 365,   wealth: 69.3  }
