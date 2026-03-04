@@ -19,8 +19,12 @@
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 2rem;
+            text-align: left;
+            margin-bottom: 2.5rem;
+            max-width: 960px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 2.5rem;
         }
 
         .header h1 {
@@ -137,7 +141,7 @@
             margin-top: -2px;
         }
 
-        .circle-animation circle {
+        .circle-animation ellipse {
             animation: drawCircle 1.5s ease-out forwards;
             animation-delay: 0.5s;
         }
@@ -167,14 +171,14 @@
 
         .wealth-unit {
             color: rgba(168, 230, 176, 0.7);
-            font-size: 1rem;
+            font-size: 1.15rem;
             font-weight: 600;
             margin-left: 0.2rem;
         }
 
         .coin-stack {
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
             align-items: center;
             gap: 0;
         }
@@ -206,23 +210,25 @@
             font-size: 1.05rem;
             font-weight: 700;
             cursor: pointer;
-            padding: 0.35rem 0.9rem;
+            padding: 0.5rem 0.9rem;
             border-radius: 8px;
             font-family: inherit;
             transition: all 0.2s;
             min-width: 14rem;
             text-align: left;
+            white-space: pre-line;
+            line-height: 1.4;
+        }
+
+        .dropdown-btn .small {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            white-space: nowrap;
         }
 
         .dropdown-btn:hover {
             background: rgba(255,255,255,0.2);
             border-color: rgba(255,255,255,0.4);
-        }
-
-        .dropdown-btn::after {
-            content: ' ▾';
-            font-size: 0.85em;
-            opacity: 0.7;
         }
 
         .dropdown-menu {
@@ -269,6 +275,38 @@
             margin-left: auto;
             margin-right: auto;
             position: relative;
+        }
+
+        .chart-switcher:focus {
+            outline: none;
+        }
+
+        .tax-popup {
+            position: absolute;
+            background: rgba(26, 60, 52, 0.95);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            max-width: 250px;
+        }
+
+        .tax-popup.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tax-popup .arrow {
+            display: inline-block;
+            margin: 0 4px;
+            font-weight: bold;
         }
 
         .chart-header {
@@ -452,19 +490,16 @@
 </head>
 <body>
     <div class="header">
-        <h1>Millionaires Report</h1>
-        <p>Hawai'i Wealth Market Sizing Data &middot; 2010&ndash;2024</p>
+        <h1>Millionaires in Hawai'i</h1>
+        <p style="margin-left: 1.5rem;">Data Breakdown</p>
     </div>
 
     <!-- Infographic Banner -->
     <div class="infographic-banner">
-        <div class="info-segment" style="flex-direction:column; align-items:flex-start; width: 24rem; flex-shrink:0;">
-            <div style="display:flex; align-items:center; gap:0.5rem;">
-                <span class="info-text">Hawai'i</span>
-                <span class="info-text">has</span>
-                <span class="info-highlight" id="summaryCount">81,814</span>
-            </div>
-            <div class="dropdown-wrapper" style="margin-left: 6.5rem;">
+        <div class="info-segment" style="gap:0.5rem; width: 24rem; flex-shrink:0;">
+            <span class="info-text">Hawai'i has</span>
+            <span class="info-highlight" id="summaryCount">81,814</span>
+            <div class="dropdown-wrapper">
                 <button class="dropdown-btn" id="tierBtn">millionaires</button>
                 <div class="dropdown-menu" id="tierMenu">
                     <button data-tier="all" class="active">millionaires (all)</button>
@@ -474,7 +509,7 @@
                 </div>
             </div>
         </div>
-        <div class="connector">that <span class="hold-wrapper">hold<svg class="circle-animation" viewBox="0 0 280 120" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="140" cy="60" r="56" stroke="rgba(168,230,176,0.6)" stroke-width="2" fill="none" stroke-dasharray="352" stroke-dashoffset="352"/></svg></span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="connector"><span class="hold-wrapper">that hold<svg class="circle-animation" viewBox="0 0 360 140" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="180" cy="70" rx="120" ry="50" stroke="rgba(168,230,176,0.6)" stroke-width="2" fill="none" stroke-dasharray="560" stroke-dashoffset="560" transform="rotate(-3, 180, 70)"/></svg></span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
                 <span class="wealth-amount" id="summaryWealth">$292.7</span>
@@ -488,6 +523,14 @@
                 </div>
                 <span class="wealth-unit" style="margin:0; line-height:1.2;">billion</span>
             </div>
+        </div>
+        </div>
+
+    <!-- Budget Callout -->
+    <div class="budget-callout">
+        <div class="budget-callout-inner">
+            <div class="budget-line1">that is <span class="budget-number" id="budgetMultiple">12.4</span> x</div>
+            <div class="budget-line2">our entire state budget for 2026</div>
         </div>
     </div>
 
@@ -504,43 +547,41 @@
         </div>
     </div>
 
-    <!-- Budget Callout -->
-    <div class="budget-callout">
-        <div class="budget-callout-inner">
-            <div class="budget-line1">that is <span class="budget-number" id="budgetMultiple">12.4</span> x</div>
-            <div class="budget-line2">our entire state budget for 2026</div>
-        </div>
-    </div>
-
-    <!-- Bar Chart: Individuals by Tier -->
+    <!-- Single Chart Container with Switcher -->
     <div class="chart-container">
         <div class="chart-header">
             <div>
-                <h2># of Individuals by Wealth Tier</h2>
-                <span class="subtitle">Hawai'i &middot; Select a year to compare tiers</span>
+                <select class="chart-switcher" id="chartSwitcher">
+                    <option value="wealth">Wealth Held by Wealthy Individuals, Billions</option>
+                    <option value="individuals"># of Individuals by Wealth Tier</option>
+                </select>
+                <span class="subtitle" id="chartSubtitle">Hawai'i, 2010&ndash;2024 (USD) &middot; Stacked area shows tiers as portions of total</span>
             </div>
-            <select class="year-select" id="yearSelect"></select>
+            <select class="year-select" id="yearSelect" style="display:none;"></select>
         </div>
-        <div class="chart-wrapper">
+        
+        <!-- Wealth Chart Wrapper -->
+        <div id="wealthWrapper">
+            <div style="text-align: right; padding: 0.5rem 1rem; font-size: 0.95rem; color: #1a3c34; font-weight: 600;">
+                <span id="aggregateTotal">Aggregate Total: $457.6B</span>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="wealthChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Individuals Chart Wrapper -->
+        <div class="chart-wrapper" id="individualsWrapper" style="display:none;">
             <canvas id="individualsChart"></canvas>
         </div>
     </div>
 
-    <!-- Line Chart: Wealth -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <div>
-                <h2>Wealth Held by Wealthy Individuals, Billions</h2>
-                <span class="subtitle">Hawai'i, 2010&ndash;2024 (USD) &middot; Stacked area shows tiers as portions of total</span>
-            </div>
-        </div>
-        <div class="chart-wrapper">
-            <canvas id="wealthChart"></canvas>
-        </div>
-        <p class="legend-hint">Click a line to highlight it &middot; Click again to reset</p>
-    </div>
-
     <p class="source">Source: Wealth-X / Altrata &mdash; Market Sizing Wealth Data for Hawai'i (Nov 9, 2025)</p>
+
+    <!-- Tax Popup -->
+    <div class="tax-popup" id="taxPopup">
+        The top income tax rate went from 8.25% <span class="arrow">→</span> 11%
+    </div>
 
     <script>
         // ── Data ──
@@ -693,30 +734,57 @@
             return wealthTiers.reduce((sum, t) => sum + wealthData[t][yi], 0);
         });
 
-        // Custom plugin to draw aggregate total in top-right
-        const totalAnnotationPlugin = {
-            id: 'totalAnnotation',
+        // Update aggregate total display
+        const aggregateTotalEl = document.getElementById('aggregateTotal');
+        const lastTotal = wealthTotal[wealthTotal.length - 1];
+        aggregateTotalEl.textContent = 'Aggregate Total: $' + lastTotal.toFixed(1) + 'B';
+
+        // Custom plugin for 2017 tax increase annotation
+        const taxIncreasePlugin = {
+            id: 'taxIncrease',
             afterDraw: function(chart) {
                 const ctx = chart.ctx;
                 const area = chart.chartArea;
-                const lastTotal = wealthTotal[wealthTotal.length - 1];
+                const meta = chart.getDatasetMeta(0); // Use first dataset for positioning
+                const dataIndex = years.indexOf(2017); // Find 2017 index
+                
+                if (dataIndex === -1) return;
+                
+                const x = meta.data[dataIndex].x;
+                const yBottom = area.bottom;
+                const yMiddle = area.top + (area.bottom - area.top) / 2;
+                
+                // Draw dotted vertical line (half height from bottom)
                 ctx.save();
-                ctx.font = 'bold 13px Inter, sans-serif';
-                ctx.fillStyle = '#1a3c34';
-                ctx.textAlign = 'right';
-                ctx.fillText('Aggregate Total: $' + lastTotal.toFixed(1) + 'B', area.right, area.top - 8);
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(x, yBottom);
+                ctx.lineTo(x, yMiddle);
+                ctx.stroke();
+                
+                // Draw "taxes increased" text above line
+                ctx.fillStyle = '#e74c3c';
+                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('taxes increased', x, yMiddle - 10);
                 ctx.restore();
+                
+                // Store line position for interaction
+                chart.taxIncreaseLine = { x, yBottom, yMiddle, width: 20 };
             }
         };
+
+        Chart.register(taxIncreasePlugin);
 
         const wealthChart = new Chart(wealthCtx, {
             type: 'line',
             data: { labels: years, datasets: buildWealthDatasets() },
-            plugins: [totalAnnotationPlugin],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
                     datalabels: {
                         align: 'top',
@@ -766,15 +834,25 @@
                             callback: function(v) { return '$' + v + 'B'; }
                         },
                         title: {
-                            display: true,
-                            text: 'Wealth (USD Billions)',
-                            font: { size: 12, weight: '500' },
-                            color: '#8fa89a'
+                            display: false
                         }
                     }
                 },
                 onClick: function(event, elements) {
+                    // Check if tax increase line was clicked
+                    if (wealthChart.taxIncreaseLine) {
+                        const rect = wealthChart.canvas.getBoundingClientRect();
+                        const x = event.clientX - rect.left;
+                        const line = wealthChart.taxIncreaseLine;
+                        
+                        if (Math.abs(x - line.x) < line.width) {
+                            showTaxPopup(event.clientX, event.clientY);
+                            return;
+                        }
+                    }
+                    
                     if (elements.length === 0) return;
+                    // Get the dataset index from the clicked element
                     const ci = elements[0].datasetIndex;
                     if (highlightedIdx === ci) {
                         wealthChart.data.datasets.forEach(ds => {
@@ -808,7 +886,66 @@
             }
         });
 
-        // ── Summary card logic ──
+        // ── Tax Popup Functions ──
+        const taxPopup = document.getElementById('taxPopup');
+        let popupTimeout;
+
+        function showTaxPopup(x, y) {
+            clearTimeout(popupTimeout);
+            taxPopup.style.left = x + 'px';
+            taxPopup.style.top = (y - 60) + 'px';
+            taxPopup.classList.add('show');
+        }
+
+        function hideTaxPopup() {
+            popupTimeout = setTimeout(() => {
+                taxPopup.classList.remove('show');
+            }, 200);
+        }
+
+        // Add hover and click handlers for wealth chart
+        wealthChart.canvas.addEventListener('mousemove', (e) => {
+            if (wealthChart.taxIncreaseLine) {
+                const rect = wealthChart.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const line = wealthChart.taxIncreaseLine;
+                
+                if (Math.abs(x - line.x) < line.width) {
+                    wealthChart.canvas.style.cursor = 'pointer';
+                    showTaxPopup(e.clientX, e.clientY);
+                } else {
+                    wealthChart.canvas.style.cursor = 'default';
+                    hideTaxPopup();
+                }
+            }
+        });
+
+        wealthChart.canvas.addEventListener('mouseleave', () => {
+            hideTaxPopup();
+        });
+
+        // ── Chart Switching Logic ──
+        const chartSwitcher = document.getElementById('chartSwitcher');
+        const wealthWrapper = document.getElementById('wealthWrapper');
+        const individualsWrapper = document.getElementById('individualsWrapper');
+        const wealthHint = document.getElementById('wealthHint');
+        const chartSubtitle = document.getElementById('chartSubtitle');
+
+        chartSwitcher.addEventListener('change', (e) => {
+            if (e.target.value === 'wealth') {
+                wealthWrapper.style.display = 'block';
+                wealthHint.style.display = 'block';
+                yearSelect.style.display = 'none';
+                individualsWrapper.style.display = 'none';
+                chartSubtitle.innerHTML = "Hawai'i, 2010&ndash;2024 (USD) &middot; Stacked area shows tiers as portions of total";
+            } else {
+                wealthWrapper.style.display = 'none';
+                wealthHint.style.display = 'none';
+                yearSelect.style.display = 'block';
+                individualsWrapper.style.display = 'block';
+                chartSubtitle.innerHTML = "Hawai'i &middot; Select a year to compare tiers";
+            }
+        });
         const STATE_BUDGET = 23.7; // $23.7B in 2026
 
         const summaryMapping = {
@@ -839,7 +976,15 @@
         }
 
         function updateSummary(info) {
-            tierBtn.textContent = info.label;
+            const mainText = info.label.split('(')[0].trim();
+            const parenthetical = info.label.includes('(') ? info.label.match(/\(([^)]+)\)/)[1] : '';
+            
+            if (parenthetical) {
+                tierBtn.innerHTML = `${mainText}<br><span class="small">(${parenthetical}) ▾</span>`;
+            } else {
+                tierBtn.innerHTML = `${mainText}<br><span class="small">▾</span>`;
+            }
+            
             summaryCount.textContent = info.count.toLocaleString();
             animateValue(summaryWealth, 0, info.wealth, 1000, v => '$' + v.toFixed(1));
             budgetMultiple.textContent = (info.wealth / STATE_BUDGET).toFixed(1);
