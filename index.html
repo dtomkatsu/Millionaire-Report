@@ -509,7 +509,7 @@
                 </div>
             </div>
         </div>
-        <div class="connector"><span class="hold-wrapper">that hold<svg class="circle-animation" viewBox="0 0 360 140" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="180" cy="70" rx="120" ry="50" stroke="rgba(168,230,176,0.6)" stroke-width="2" fill="none" stroke-dasharray="560" stroke-dashoffset="560" transform="rotate(-3, 180, 70)"/></svg></span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="connector"><span class="hold-wrapper">that hold</span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
             <div style="display:flex; flex-direction:column; align-items:flex-end;">
                 <span class="wealth-amount" id="summaryWealth">$292.7</span>
@@ -569,11 +569,17 @@
                 <canvas id="wealthChart"></canvas>
             </div>
         </div>
+        <p class="chart-caption" id="wealthCaption" style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #666; font-style: italic;">
+            Even with tax increases, the wealth held by millionaires in Hawai'i has almost tripled since 2010.
+        </p>
 
         <!-- Individuals Chart Wrapper -->
         <div class="chart-wrapper" id="individualsWrapper" style="display:none;">
             <canvas id="individualsChart"></canvas>
         </div>
+        <p class="chart-caption" id="individualsCaption" style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #666; font-style: italic; display: none;">
+            The number of millionaires in Hawai'i has steadily increased since 2010, despite tax increases.
+        </p>
     </div>
 
     <p class="source">Source: Wealth-X / Altrata &mdash; Market Sizing Wealth Data for Hawai'i (Nov 9, 2025)</p>
@@ -618,37 +624,43 @@
             yearSelect.appendChild(opt);
         });
 
-        function getBarData(yearIdx) {
+        function getBarData() {
             const tiers = Object.keys(individualsData);
             return tiers.map((tier, i) => ({
                 label: tier,
-                data: [individualsData[tier][yearIdx]],
+                data: individualsData[tier],
                 backgroundColor: blueShades[i].main,
-                borderRadius: 6,
-                barPercentage: 0.7,
-                categoryPercentage: 0.8
+                borderRadius: 4,
+                barPercentage: 0.8,
+                categoryPercentage: 0.9
             }));
         }
 
         const barCtx = document.getElementById('individualsChart').getContext('2d');
+        console.log('Creating individuals chart with data:', getBarData());
         let barChart = new Chart(barCtx, {
             type: 'bar',
             data: {
-                labels: [''],
-                datasets: getBarData(years.length - 1)
+                labels: years,
+                datasets: getBarData()
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                indexAxis: 'y',
                 plugins: {
                     datalabels: {
                         anchor: 'end',
-                        align: 'right',
-                        offset: 8,
-                        font: { size: 13, weight: '700' },
+                        align: 'top',
+                        offset: 4,
+                        font: { size: 11, weight: '600' },
                         color: function(ctx) { return ctx.dataset.backgroundColor; },
-                        formatter: function(value) { return value.toLocaleString(); }
+                        formatter: function(value) { 
+                            return value > 0 ? value.toLocaleString() : ''; 
+                        },
+                        display: function(ctx) {
+                            // Only show labels for 2010 (index 0) and 2024 (last index)
+                            return ctx.dataIndex === 0 || ctx.dataIndex === years.length - 1;
+                        }
                     },
                     legend: {
                         position: 'top',
@@ -679,25 +691,31 @@
                         ticks: {
                             font: { size: 11 },
                             color: '#8fa89a',
-                            callback: function(v) {
-                                if (v >= 1000) return (v/1000).toFixed(0) + 'K';
-                                return v;
+                            callback: function(value, index) {
+                                // Show every 3rd year to reduce clutter, but always show 2010 and 2024
+                                if (index === 0 || index === years.length - 1 || index % 3 === 0) {
+                                    return years[index];
+                                }
+                                return '';
                             }
                         }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { display: false }
+                        ticks: {
+                            font: { size: 11 },
+                            color: '#8fa89a',
+                            callback: function(v) {
+                                if (v >= 1000) return (v/1000).toFixed(0) + 'K';
+                                return v;
+                            }
+                        }
                     }
                 }
             }
         });
 
-        yearSelect.addEventListener('change', function() {
-            const idx = years.indexOf(parseInt(this.value));
-            barChart.data.datasets = getBarData(idx);
-            barChart.update();
-        });
+        // Year select no longer needed - showing all years
 
         // ═══════════════════════════════
         // LINE CHART — Wealth (Stacked)
@@ -743,12 +761,15 @@
         const taxIncreaseAnnotation = {
             id: 'taxIncreaseAnnotation',
             afterDraw: function(chart) {
+                // Only run on wealth chart, not individuals chart
+                if (chart.canvas.id !== 'wealthChart') return;
+                
                 const ctx = chart.ctx;
                 const area = chart.chartArea;
                 const meta = chart.getDatasetMeta(0);
                 const dataIndex = years.indexOf(2017);
                 
-                if (dataIndex === -1) return;
+                if (dataIndex === -1 || !meta.data[dataIndex]) return;
                 
                 const x = meta.data[dataIndex].x;
                 const yBottom = area.bottom;
@@ -946,22 +967,31 @@
         const chartSwitcher = document.getElementById('chartSwitcher');
         const wealthWrapper = document.getElementById('wealthWrapper');
         const individualsWrapper = document.getElementById('individualsWrapper');
-        const wealthHint = document.getElementById('wealthHint');
         const chartSubtitle = document.getElementById('chartSubtitle');
 
         chartSwitcher.addEventListener('change', (e) => {
+            const individualsCaption = document.getElementById('individualsCaption');
+            const wealthCaption = document.getElementById('wealthCaption');
+            
             if (e.target.value === 'wealth') {
                 wealthWrapper.style.display = 'block';
-                wealthHint.style.display = 'block';
                 yearSelect.style.display = 'none';
                 individualsWrapper.style.display = 'none';
+                individualsCaption.style.display = 'none';
+                wealthCaption.style.display = 'block';
                 chartSubtitle.innerHTML = "Hawai'i, 2010&ndash;2024 (USD) &middot; Stacked area shows tiers as portions of total";
             } else {
                 wealthWrapper.style.display = 'none';
-                wealthHint.style.display = 'none';
-                yearSelect.style.display = 'block';
+                yearSelect.style.display = 'none';
                 individualsWrapper.style.display = 'block';
-                chartSubtitle.innerHTML = "Hawai'i &middot; Select a year to compare tiers";
+                individualsCaption.style.display = 'block';
+                wealthCaption.style.display = 'none';
+                chartSubtitle.innerHTML = "Hawai'i, 2010&ndash;2024 &middot; Number of individuals by wealth tier";
+                // Force resize and update the bar chart when it becomes visible
+                setTimeout(() => {
+                    barChart.resize();
+                    barChart.update();
+                }, 50);
             }
         });
         const STATE_BUDGET = 23.7; // $23.7B in 2026
