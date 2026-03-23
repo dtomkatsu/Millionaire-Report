@@ -49,13 +49,25 @@
             border-radius: 20px;
             padding: 2.2rem 2.5rem;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
             box-shadow: 0 8px 32px rgba(26, 60, 52, 0.25);
             position: relative;
             overflow: visible;
+            z-index: 100;
+        }
+
+        .banner-second-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            width: auto;
+            margin-top: 1.2rem;
+        }
+
+        .infographic-banner > .info-segment {
+            z-index: 20;
         }
 
         .infographic-banner::before {
@@ -92,7 +104,7 @@
 
         .info-highlight {
             color: #ffffff;
-            font-size: 2.6rem;
+            font-size: 2.2rem;
             font-weight: 800;
             line-height: 1;
             letter-spacing: -1px;
@@ -111,7 +123,6 @@
             font-size: 1.4rem;
             font-weight: 700;
             padding: 0 1.2rem;
-            transform: translateX(3rem);
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
@@ -204,8 +215,8 @@
         }
 
         .dropdown-btn {
-            background: rgba(255,255,255,0.12);
-            border: 1.5px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,255,255,0.15);
             color: #ffffff;
             font-size: 1.05rem;
             font-weight: 700;
@@ -216,7 +227,7 @@
             transition: all 0.2s;
             min-width: 14rem;
             text-align: left;
-            white-space: pre-line;
+            white-space: nowrap;
             line-height: 1.4;
         }
 
@@ -471,20 +482,70 @@
             margin-left: 2.85rem;
         }
 
+        .narrative-more-toggle {
+            background: none;
+            border: none;
+            color: #2a6b4f;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 2.85rem;
+            margin-top: 0.5rem;
+            text-decoration: underline;
+            transition: opacity 0.2s;
+        }
+
+        .narrative-more-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .narrative-more-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .narrative-more-content.open {
+            max-height: 500px;
+        }
+
         .narrative-source a {
             color: #2a6b4f;
             text-decoration: underline;
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
             .infographic-banner {
-                flex-direction: column;
+                align-items: center;
                 text-align: center;
-                gap: 0.75rem;
                 padding: 1.5rem;
             }
-            .connector { padding: 0.25rem 0; }
+            .banner-second-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .infographic-banner .info-segment {
+                width: auto !important;
+                flex-shrink: 1 !important;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center !important;
+                gap: 0.4rem !important;
+            }
+            .connector {
+                padding: 0.25rem 0;
+                justify-content: center;
+            }
             .info-highlight, .wealth-amount { font-size: 2rem; }
+            .wealth-amount { min-width: unset; text-align: center; }
+            .dropdown-btn { min-width: unset; width: auto; text-align: center; white-space: nowrap; }
+            .dropdown-btn br { display: none; }
+            .dropdown-btn .small { display: inline; }
+            .infographic-banner .info-segment div[style*="flex-end"] { align-items: center !important; }
         }
     </style>
 </head>
@@ -496,9 +557,9 @@
 
     <!-- Infographic Banner -->
     <div class="infographic-banner">
-        <div class="info-segment" style="gap:0.5rem; width: 24rem; flex-shrink:0;">
+        <div class="info-segment" style="gap:0.2rem; width: 100%;">
             <span class="info-text">Hawai'i has</span>
-            <span class="info-highlight" id="summaryCount">81,814</span>
+            <span class="info-highlight" id="summaryCount" style="margin-left: auto;">81,814</span>
             <div class="dropdown-wrapper">
                 <button class="dropdown-btn" id="tierBtn">millionaires</button>
                 <div class="dropdown-menu" id="tierMenu">
@@ -509,19 +570,21 @@
                 </div>
             </div>
         </div>
-        <div class="connector"><span class="hold-wrapper">that hold</span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
-            <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                <span class="wealth-amount" id="summaryWealth">$292.7</span>
-                <span class="info-text">in wealth</span>
-            </div>
-            <div style="position:relative;">
-                <div class="coin-stack" style="position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px;">
-                    <div class="coin"></div>
-                    <div class="coin"></div>
-                    <div class="coin"></div>
+        <div class="banner-second-row">
+            <div class="connector"><span class="hold-wrapper">that hold</span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
+                <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                    <span class="wealth-amount" id="summaryWealth">$292.7</span>
+                    <span class="info-text">in wealth</span>
                 </div>
-                <span class="wealth-unit" style="margin:0; line-height:1.2;">billion</span>
+                <div style="position:relative;">
+                    <div class="coin-stack" style="position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px;">
+                        <div class="coin"></div>
+                        <div class="coin"></div>
+                        <div class="coin"></div>
+                    </div>
+                    <span class="wealth-unit" style="margin:0; line-height:1.2;">billion</span>
+                </div>
             </div>
         </div>
         </div>
@@ -542,7 +605,11 @@
                 <span class="narrative-point-number">1</span>
                 <h3>They pay low taxes on their investments</h3>
             </div>
-            <p>Hawaiʻi is one of only nine states that taxes capital gains at a lower rate than ordinary income&mdash;effectively a loophole that almost entirely benefits the wealthy. Of taxpayers who reported capital gains in 2019, the 7.7% who earned $400,000+ received <strong>79.4% of all capital gains income</strong> in the state. Those making over $1&nbsp;million a year actually pay a <em>lower</em> effective tax rate than the income group just below them, because Hawaiʻi taxes long-term capital gains at just 7.25% versus the top marginal rate of 11%. If capital gains were taxed like regular income, the state would gain roughly <strong>$180&nbsp;million per year</strong>&mdash;with 97% paid by the top 5% of earners. The bottom 80% of taxpayers would pay nothing additional.</p>
+            <p>Hawaiʻi is one of only nine states that taxes capital gains at a lower rate than ordinary income&mdash;effectively a loophole that almost entirely benefits the wealthy.</p>
+            <button class="narrative-more-toggle" data-target="narrative-1">More</button>
+            <div class="narrative-more-content" id="narrative-1">
+                <p style="margin-left: 2.85rem; margin-top: 0.5rem; font-size: 0.92rem; line-height: 1.7; color: #3a3a3a;">Of taxpayers who reported capital gains in 2019, the 7.7% who earned $400,000+ received <strong>79.4% of all capital gains income</strong> in the state. Those making over $1&nbsp;million a year actually pay a <em>lower</em> effective tax rate than the income group just below them, because Hawaiʻi taxes long-term capital gains at just 7.25% versus the top marginal rate of 11%. If capital gains were taxed like regular income, the state would gain roughly <strong>$180&nbsp;million per year</strong>&mdash;with 97% paid by the top 5% of earners. The bottom 80% of taxpayers would pay nothing additional.</p>
+            </div>
             <span class="narrative-source">Source: <a href="https://www.hitaxfairness.org/capital-gains" target="_blank">HI Tax Fairness Coalition &mdash; Capital Gains Tax Reform</a></span>
         </div>
     </div>
@@ -647,18 +714,23 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { left: 20, right: 20, top: 30 }
+                },
                 plugins: {
                     datalabels: {
                         anchor: 'end',
                         align: 'top',
                         offset: 4,
+                        clip: false,
                         font: { size: 11, weight: '600' },
                         color: function(ctx) { return ctx.dataset.backgroundColor; },
-                        formatter: function(value) { 
-                            return value > 0 ? value.toLocaleString() : ''; 
+                        formatter: function(value) {
+                            return value > 0 ? value.toLocaleString() : '';
                         },
                         display: function(ctx) {
-                            // Only show labels for 2010 (index 0) and 2024 (last index)
+                            // Only show labels for $1M-$20M tier at first and last year
+                            if (ctx.datasetIndex !== 0) return false;
                             return ctx.dataIndex === 0 || ctx.dataIndex === years.length - 1;
                         }
                     },
@@ -701,15 +773,7 @@
                         }
                     },
                     y: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { size: 11 },
-                            color: '#8fa89a',
-                            callback: function(v) {
-                                if (v >= 1000) return (v/1000).toFixed(0) + 'K';
-                                return v;
-                            }
-                        }
+                        display: false
                     }
                 }
             }
@@ -789,7 +853,7 @@
                 ctx.fillStyle = '#2a6b4f';
                 ctx.font = 'bold 12px Inter, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('tax increase', x, yMiddle - 10);
+                ctx.fillText('tax increase', x, yMiddle - 25);
                 ctx.restore();
                 
                 // Store position for interaction
@@ -1028,9 +1092,9 @@
             const parenthetical = info.label.includes('(') ? info.label.match(/\(([^)]+)\)/)[1] : '';
             
             if (parenthetical) {
-                tierBtn.innerHTML = `${mainText}<br><span class="small">(${parenthetical}) ▾</span>`;
+                tierBtn.innerHTML = `${mainText} <span class="small">(${parenthetical})</span> ▾`;
             } else {
-                tierBtn.innerHTML = `${mainText}<br><span class="small">▾</span>`;
+                tierBtn.innerHTML = `${mainText} ▾`;
             }
             
             summaryCount.textContent = info.count.toLocaleString();
@@ -1057,6 +1121,17 @@
                 tierMenu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 tierMenu.classList.remove('open');
+            });
+        });
+
+        // ── More/Less toggle for narrative sections ──
+        document.querySelectorAll('.narrative-more-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = btn.dataset.target;
+                const content = document.getElementById(targetId);
+                content.classList.toggle('open');
+                btn.textContent = content.classList.contains('open') ? 'Less' : 'More';
             });
         });
     </script>
