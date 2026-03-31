@@ -6,15 +6,17 @@
     <title>Millionaires Report — Hawai'i Wealth Data</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #f5f7f0;
+            font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+            background: #f4f1eb;
+            background-image:
+                url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
             color: #2a2a2a;
-            padding: 2rem;
+            padding: clamp(1rem, 4vw, 2.5rem);
             min-height: 100vh;
         }
 
@@ -28,184 +30,202 @@
         }
 
         .header h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
+            font-family: 'Nunito', system-ui, sans-serif;
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            font-weight: 900;
             color: #1a3c34;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
         }
 
         .header p {
-            color: #6b8f71;
-            font-size: 0.95rem;
-            margin-top: 0.3rem;
+            color: #8a7e6b;
+            font-size: 0.9rem;
+            margin-top: 0.4rem;
             font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         /* ── Infographic Summary Banner ── */
         .infographic-banner {
             max-width: 960px;
             margin: 0 auto 2.5rem;
-            background: linear-gradient(135deg, #1a3c34 0%, #2a6b4f 100%);
-            border-radius: 20px;
-            padding: 2.2rem 2.5rem;
+            background: linear-gradient(160deg, #0f2922 0%, #1a3c34 30%, #1e4f40 70%, #245a48 100%);
+            border-radius: 24px;
+            padding: clamp(1.5rem, 4vw, 2.8rem) clamp(1.5rem, 4vw, 3rem);
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 0.75rem;
-            box-shadow: 0 8px 32px rgba(26, 60, 52, 0.25);
+            gap: 0;
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.07),
+                0 4px 12px rgba(15, 41, 34, 0.12),
+                0 16px 40px rgba(15, 41, 34, 0.18);
             position: relative;
             overflow: visible;
             z-index: 100;
         }
 
-        .banner-second-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            width: auto;
-            margin-top: 1.2rem;
-        }
-
-        .infographic-banner > .info-segment {
-            z-index: 20;
-        }
-
         .infographic-banner::before {
             content: '';
             position: absolute;
-            top: -40px; right: -40px;
-            width: 180px; height: 180px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 50%;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 90% 20%, rgba(168, 230, 176, 0.07) 0%, transparent 55%);
+            pointer-events: none;
+            border-radius: 24px;
         }
 
         .infographic-banner::after {
-            content: '';
-            position: absolute;
-            bottom: -30px; left: -30px;
-            width: 120px; height: 120px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 50%;
+            content: none;
         }
 
-        .info-segment {
+        /* Headline row */
+        .banner-headline {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.5rem;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            margin-bottom: clamp(1.2rem, 3vw, 2rem);
         }
 
-        .info-text {
-            color: rgba(255,255,255,0.7);
-            font-size: 1.15rem;
+        .banner-headline .label {
+            color: rgba(255,255,255,0.6);
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
             font-weight: 500;
         }
 
-        .info-highlight {
-            color: #ffffff;
-            font-size: 2.2rem;
-            font-weight: 800;
-            line-height: 1;
-            letter-spacing: -1px;
-            padding: 0 0.15rem;
-            transition: transform 0.25s ease;
-            display: inline-block;
-            cursor: default;
-        }
-
-        .info-highlight:hover {
-            transform: scale(1.12);
-        }
-
-        .connector {
-            color: rgba(255,255,255,0.75);
-            font-size: 1.4rem;
-            font-weight: 700;
-            padding: 0 1.2rem;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            flex-shrink: 0;
-        }
-
-        .connector .money-icon {
-            width: 28px;
-            height: 28px;
-            opacity: 0.8;
-        }
-
-        .hold-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .circle-animation {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            margin-top: -2px;
-        }
-
-        .circle-animation ellipse {
-            animation: drawCircle 1.5s ease-out forwards;
-            animation-delay: 0.5s;
-        }
-
-        @keyframes drawCircle {
-            to {
-                stroke-dashoffset: 0;
-            }
-        }
-
-        .wealth-amount {
+        .banner-headline .count {
+            font-family: 'Nunito', system-ui, sans-serif;
             color: #a8e6b0;
-            font-size: 2.6rem;
-            font-weight: 800;
+            font-size: clamp(2rem, 6vw, 3.2rem);
+            font-weight: 900;
+            font-style: italic;
             line-height: 1;
             letter-spacing: -1px;
-            transition: transform 0.25s ease;
-            display: inline-block;
-            cursor: default;
-            min-width: 8ch;
-            text-align: right;
+            border-bottom: 2px solid rgba(168, 230, 176, 0.35);
+            padding-bottom: 3px;
         }
 
-        .wealth-amount:hover {
-            transform: scale(1.12);
+        /* Stats row */
+        .banner-stats {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0;
+            position: relative;
+            z-index: 2;
+            background: rgba(255,255,255,0.05);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.07);
+            padding: clamp(1rem, 2.5vw, 1.5rem) 0;
         }
 
-        .wealth-unit {
-            color: rgba(168, 230, 176, 0.7);
-            font-size: 1.15rem;
+        .banner-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 clamp(0.75rem, 3vw, 1.5rem);
+        }
+
+        .banner-stat-value {
+            font-family: 'Nunito', system-ui, sans-serif;
+            color: #a8e6b0;
+            font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+
+        .banner-stat-value.white {
+            color: #ffffff;
+        }
+
+        .banner-stat-unit {
+            color: rgba(168, 230, 176, 0.5);
+            font-size: 0.85rem;
             font-weight: 600;
-            margin-left: 0.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.15rem;
         }
 
-        .coin-stack {
+        .banner-stat-label {
+            color: rgba(255,255,255,0.45);
+            font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+            font-weight: 500;
+            margin-top: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .banner-divider {
+            width: 1px;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.15), transparent);
+            align-self: stretch;
+        }
+
+        /* ── Coin stack ── */
+        .coin-tower {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0;
+            margin: 0 auto 0.6rem;
         }
 
-        .coin {
-            display: block;
-            height: 7px;
+        .coin-disc {
             border-radius: 50%;
-            border: 2px solid #4ade80;
-            background: rgba(74, 222, 128, 0.3);
-            margin: 0;
+            height: 8px;
+            background: linear-gradient(180deg, #c6f0cc 0%, #7bc88a 50%, #5aaa6e 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.35);
+            position: relative;
+            margin-bottom: -2px;
+        }
+        .coin-disc:nth-child(1) { width: 28px; }
+        .coin-disc:nth-child(2) { width: 32px; filter: brightness(0.9); }
+        .coin-disc:nth-child(3) { width: 36px; filter: brightness(0.82); }
+        .coin-disc:nth-child(4) { width: 38px; filter: brightness(0.74); margin-bottom: 0; }
+
+        /* ── Budget unit grid ── */
+        .budget-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            justify-content: center;
+            max-width: 140px;
+            margin: 0.5rem auto 0.35rem;
         }
 
-        .coin:nth-child(1) { width: 18px; }
-        .coin:nth-child(2) { width: 20px; }
-        .coin:nth-child(3) { width: 22px; }
+        .budget-block {
+            width: 11px;
+            height: 11px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.14);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .budget-block.full {
+            background: rgba(255,255,255,0.28);
+            border-color: rgba(255,255,255,0.18);
+        }
+
+        .budget-block.reference {
+            background: rgba(252, 196, 72, 0.8);
+            border-color: rgba(252, 196, 72, 0.5);
+            box-shadow: 0 0 6px rgba(252, 196, 72, 0.35);
+        }
+
+        .budget-block.partial::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: var(--fill);
+            background: rgba(255,255,255,0.32);
+        }
 
         /* ── Dropdown in banner ── */
         .dropdown-wrapper {
@@ -216,30 +236,29 @@
 
         .dropdown-btn {
             background: rgba(255,255,255,0.08);
-            border: 1.5px solid rgba(255,255,255,0.15);
-            color: #ffffff;
-            font-size: 1.05rem;
-            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.85);
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            font-weight: 600;
             cursor: pointer;
-            padding: 0.5rem 0.9rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 8px;
             font-family: inherit;
             transition: all 0.2s;
-            min-width: 14rem;
-            text-align: left;
             white-space: nowrap;
             line-height: 1.4;
+            backdrop-filter: blur(4px);
         }
 
         .dropdown-btn .small {
-            font-size: 0.75rem;
-            opacity: 0.8;
+            font-size: 0.7rem;
+            opacity: 0.7;
             white-space: nowrap;
         }
 
         .dropdown-btn:hover {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
         }
 
         .dropdown-menu {
@@ -279,8 +298,12 @@
         .chart-container {
             background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 2px 16px rgba(26, 60, 52, 0.07);
-            padding: 2rem 2rem 1.5rem;
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.04),
+                0 4px 16px rgba(26, 60, 52, 0.06),
+                0 12px 40px rgba(26, 60, 52, 0.05);
+            border: 1px solid rgba(255,255,255,0.8);
+            padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem) 1.5rem;
             margin-bottom: 2rem;
             max-width: 960px;
             margin-left: auto;
@@ -330,6 +353,7 @@
         }
 
         .chart-header h2 {
+            font-family: 'Nunito', system-ui, sans-serif;
             font-size: 1.15rem;
             font-weight: 700;
             color: #1a3c34;
@@ -371,51 +395,16 @@
         .source {
             text-align: center;
             font-size: 0.72rem;
-            color: #a3b8aa;
+            color: #a09585;
             margin-top: 1.5rem;
             max-width: 960px;
             margin-left: auto;
             margin-right: auto;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        /* ── Budget Callout ── */
-        .budget-callout {
-            max-width: 960px;
-            margin: -1rem auto 2.5rem;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .budget-callout-inner {
-            width: 300px;
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 1rem 1.4rem;
-            box-shadow: 0 2px 16px rgba(26, 60, 52, 0.07);
-            border-left: 4px solid #2a6b4f;
-            text-align: center;
-        }
-
-        .budget-line1 {
-            font-size: 1rem;
-            color: #2a2a2a;
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        .budget-number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #1a3c34;
-            padding: 0 0.15rem;
-        }
-
-        .budget-line2 {
-            font-size: 0.85rem;
-            color: #6b8f71;
-            font-weight: 500;
-            margin-top: 0.15rem;
-        }
+        /* budget-callout removed — now integrated into banner */
 
         /* ── Narrative Section ── */
         .narrative-section {
@@ -423,11 +412,16 @@
             margin: 0 auto 2.5rem;
             background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 2px 16px rgba(26, 60, 52, 0.07);
-            padding: 2rem 2.5rem;
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.04),
+                0 4px 16px rgba(26, 60, 52, 0.06),
+                0 12px 40px rgba(26, 60, 52, 0.05);
+            border: 1px solid rgba(255,255,255,0.8);
+            padding: clamp(1.5rem, 3vw, 2.5rem);
         }
 
         .narrative-title {
+            font-family: 'Nunito', system-ui, sans-serif;
             font-size: 1.3rem;
             font-weight: 800;
             color: #1a3c34;
@@ -516,36 +510,24 @@
         }
 
         @media (max-width: 600px) {
-            body { padding: 1rem; }
-            .infographic-banner {
-                align-items: center;
-                text-align: center;
-                padding: 1.5rem;
-            }
-            .banner-second-row {
-                flex-direction: column;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            .infographic-banner .info-segment {
-                width: auto !important;
-                flex-shrink: 1 !important;
-                flex-direction: row !important;
-                flex-wrap: wrap;
-                justify-content: center;
-                align-items: center !important;
-                gap: 0.4rem !important;
-            }
-            .connector {
-                padding: 0.25rem 0;
+            .banner-headline {
                 justify-content: center;
             }
-            .info-highlight, .wealth-amount { font-size: 2rem; }
-            .wealth-amount { min-width: unset; text-align: center; }
-            .dropdown-btn { min-width: unset; width: auto; text-align: center; white-space: nowrap; }
-            .dropdown-btn br { display: none; }
-            .dropdown-btn .small { display: inline; }
-            .infographic-banner .info-segment div[style*="flex-end"] { align-items: center !important; }
+            .banner-stats {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .banner-divider {
+                width: 60%;
+                height: 1px;
+                margin: 0.8rem auto;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            }
+            .banner-stat {
+                padding: 0.4rem 1rem;
+            }
+            .header { padding-left: 0; text-align: center; }
+            .header p { margin-left: 0; }
         }
     </style>
 </head>
@@ -557,11 +539,11 @@
 
     <!-- Infographic Banner -->
     <div class="infographic-banner">
-        <div class="info-segment" style="gap:0.2rem; width: 100%;">
-            <span class="info-text">Hawai'i has</span>
-            <span class="info-highlight" id="summaryCount" style="margin-left: auto;">81,814</span>
+        <div class="banner-headline">
+            <span class="label">Hawai'i has</span>
+            <span class="count" id="summaryCount">83,424</span>
             <div class="dropdown-wrapper">
-                <button class="dropdown-btn" id="tierBtn">millionaires</button>
+                <button class="dropdown-btn" id="tierBtn">millionaires &#9662;</button>
                 <div class="dropdown-menu" id="tierMenu">
                     <button data-tier="all" class="active">millionaires (all)</button>
                     <button data-tier="$1M-$20M">millionaires ($1M&ndash;$20M)</button>
@@ -570,30 +552,25 @@
                 </div>
             </div>
         </div>
-        <div class="banner-second-row">
-            <div class="connector"><span class="hold-wrapper">that hold</span><svg class="money-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8c-6 0-18 3-18 12v24c0 9 12 12 18 12s18-3 18-12V20c0-9-12-12-18-12z" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><ellipse cx="32" cy="20" rx="18" ry="12" stroke="rgba(168,230,176,0.7)" stroke-width="2.5" fill="none"/><path d="M28 30v8M36 30v8M32 28v12" stroke="rgba(168,230,176,0.7)" stroke-width="2" stroke-linecap="round"/><path d="M27 34h10M27 38h10" stroke="rgba(168,230,176,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-            <div class="info-segment" style="flex-direction:row; align-items:baseline; gap:0.25rem; flex-shrink:0;">
-                <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                    <span class="wealth-amount" id="summaryWealth">$292.7</span>
-                    <span class="info-text">in wealth</span>
+        <div class="banner-stats">
+            <div class="banner-stat">
+                <div class="coin-tower">
+                    <div class="coin-disc"></div>
+                    <div class="coin-disc"></div>
+                    <div class="coin-disc"></div>
+                    <div class="coin-disc"></div>
                 </div>
-                <div style="position:relative;">
-                    <div class="coin-stack" style="position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px;">
-                        <div class="coin"></div>
-                        <div class="coin"></div>
-                        <div class="coin"></div>
-                    </div>
-                    <span class="wealth-unit" style="margin:0; line-height:1.2;">billion</span>
-                </div>
+                <span class="banner-stat-value" id="summaryWealth">$457.6</span>
+                <span class="banner-stat-unit">billion</span>
+                <span class="banner-stat-label">total wealth held</span>
             </div>
-        </div>
-        </div>
-
-    <!-- Budget Callout -->
-    <div class="budget-callout">
-        <div class="budget-callout-inner">
-            <div class="budget-line1">that is <span class="budget-number" id="budgetMultiple">12.4</span> x</div>
-            <div class="budget-line2">our entire state budget for 2026</div>
+            <div class="banner-divider"></div>
+            <div class="banner-stat">
+                <span class="banner-stat-value white" id="budgetMultiple">19.3</span>
+                <span class="banner-stat-unit" style="color: rgba(255,255,255,0.35);">times the state budget</span>
+                <div class="budget-grid" id="budgetGrid"></div>
+                <span class="banner-stat-label"><span style="display:inline-block;width:8px;height:8px;background:rgba(252,196,72,0.8);border-radius:1px;vertical-align:middle;margin-right:3px;"></span> = 1 state budget ($23.7B)</span>
+            </div>
         </div>
     </div>
 
@@ -851,7 +828,7 @@
                 
                 // Draw label
                 ctx.fillStyle = '#2a6b4f';
-                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.font = 'bold 12px Nunito, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText('tax increase', x, yMiddle - 25);
                 ctx.restore();
@@ -1087,6 +1064,22 @@
             requestAnimationFrame(tick);
         }
 
+        function updateBudgetGrid(multiple) {
+            const grid = document.getElementById('budgetGrid');
+            const full = Math.floor(multiple);
+            const partial = multiple - full;
+            let html = '';
+            for (let i = 0; i < full; i++) {
+                const cls = i === 0 ? 'budget-block full reference' : 'budget-block full';
+                html += `<div class="${cls}"></div>`;
+            }
+            if (partial > 0.05) {
+                const cls = full === 0 ? 'budget-block partial reference' : 'budget-block partial';
+                html += `<div class="${cls}" style="--fill:${(partial * 100).toFixed(0)}%"></div>`;
+            }
+            grid.innerHTML = html;
+        }
+
         function updateSummary(info) {
             const mainText = info.label.split('(')[0].trim();
             const parenthetical = info.label.includes('(') ? info.label.match(/\(([^)]+)\)/)[1] : '';
@@ -1099,7 +1092,9 @@
             
             summaryCount.textContent = info.count.toLocaleString();
             animateValue(summaryWealth, 0, info.wealth, 1000, v => '$' + v.toFixed(1));
-            budgetMultiple.textContent = (info.wealth / STATE_BUDGET).toFixed(1);
+            const multiple = info.wealth / STATE_BUDGET;
+            budgetMultiple.textContent = multiple.toFixed(1);
+            updateBudgetGrid(multiple);
         }
 
         // Initial animation on load
