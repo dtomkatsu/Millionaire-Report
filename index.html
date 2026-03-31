@@ -87,7 +87,7 @@
             flex-wrap: wrap;
             gap: 0.3rem 0.5rem;
             position: relative;
-            z-index: 2;
+            z-index: 20;
             margin-bottom: clamp(1.2rem, 3vw, 2rem);
         }
 
@@ -99,14 +99,14 @@
 
         .banner-headline .count {
             font-family: 'Nunito', system-ui, sans-serif;
-            color: #a8e6b0;
+            color: #ffffff;
             font-size: clamp(2rem, 6vw, 3.2rem);
             font-weight: 900;
-            font-style: italic;
             line-height: 1;
             letter-spacing: -1px;
-            border-bottom: 2px solid rgba(168, 230, 176, 0.35);
-            padding-bottom: 3px;
+            background: linear-gradient(180deg, rgba(168,230,176,0.15) 60%, rgba(168,230,176,0.25) 100%);
+            padding: 2px 8px 4px;
+            border-radius: 6px;
         }
 
         /* Stats row */
@@ -167,64 +167,31 @@
         }
 
         /* ── Coin stack ── */
-        .coin-tower {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0;
-            margin: 0 auto 0.6rem;
+        .coin-stack-svg {
+            display: block;
+            margin: 0 auto 0.4rem;
         }
 
-        .coin-disc {
-            border-radius: 50%;
-            height: 8px;
-            background: linear-gradient(180deg, #c6f0cc 0%, #7bc88a 50%, #5aaa6e 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.35);
-            position: relative;
-            margin-bottom: -2px;
-        }
-        .coin-disc:nth-child(1) { width: 28px; }
-        .coin-disc:nth-child(2) { width: 32px; filter: brightness(0.9); }
-        .coin-disc:nth-child(3) { width: 36px; filter: brightness(0.82); }
-        .coin-disc:nth-child(4) { width: 38px; filter: brightness(0.74); margin-bottom: 0; }
-
-        /* ── Budget unit grid ── */
+        /* ── Budget pie grid ── */
         .budget-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 3px;
+            gap: 4px;
             justify-content: center;
-            max-width: 140px;
+            max-width: 160px;
             margin: 0.5rem auto 0.35rem;
         }
 
-        .budget-block {
-            width: 11px;
-            height: 11px;
-            border-radius: 2px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.14);
+        .budget-pie {
+            width: 16px;
+            height: 16px;
             position: relative;
-            overflow: hidden;
         }
 
-        .budget-block.full {
-            background: rgba(255,255,255,0.28);
-            border-color: rgba(255,255,255,0.18);
-        }
-
-        .budget-block.reference {
-            background: rgba(252, 196, 72, 0.8);
-            border-color: rgba(252, 196, 72, 0.5);
-            box-shadow: 0 0 6px rgba(252, 196, 72, 0.35);
-        }
-
-        .budget-block.partial::after {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: var(--fill);
-            background: rgba(255,255,255,0.32);
+        .budget-pie svg {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         /* ── Dropdown in banner ── */
@@ -269,7 +236,7 @@
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(26, 60, 52, 0.2);
-            z-index: 200;
+            z-index: 9999;
             min-width: 280px;
             padding: 0.5rem 0;
         }
@@ -554,12 +521,23 @@
         </div>
         <div class="banner-stats">
             <div class="banner-stat">
-                <div class="coin-tower">
-                    <div class="coin-disc"></div>
-                    <div class="coin-disc"></div>
-                    <div class="coin-disc"></div>
-                    <div class="coin-disc"></div>
-                </div>
+                <svg class="coin-stack-svg" width="38" height="38" viewBox="0 0 38 38">
+                    <!-- Bottom coin side -->
+                    <path d="M4,27 L4,31 A15,5 0 0 0 34,31 L34,27 Z" fill="rgba(45,100,58,0.6)"/>
+                    <!-- Bottom coin face -->
+                    <ellipse cx="19" cy="27" rx="15" ry="5" fill="rgba(72,145,88,0.45)" stroke="rgba(168,230,176,0.28)" stroke-width="1"/>
+                    <!-- Middle coin side -->
+                    <path d="M4,18 L4,22 A15,5 0 0 0 34,22 L34,18 Z" fill="rgba(55,118,70,0.68)"/>
+                    <!-- Middle coin face -->
+                    <ellipse cx="19" cy="18" rx="15" ry="5" fill="rgba(88,165,104,0.58)" stroke="rgba(168,230,176,0.38)" stroke-width="1"/>
+                    <!-- Top coin side -->
+                    <path d="M4,9 L4,13 A15,5 0 0 0 34,13 L34,9 Z" fill="rgba(65,135,80,0.75)"/>
+                    <!-- Top coin face -->
+                    <ellipse cx="19" cy="9" rx="15" ry="5" fill="rgba(105,188,122,0.72)" stroke="rgba(168,230,176,0.55)" stroke-width="1"/>
+                    <!-- Inner ring on top -->
+                    <ellipse cx="19" cy="9" rx="10" ry="3.3" fill="none" stroke="rgba(168,230,176,0.3)" stroke-width="0.7"/>
+                    <text x="19" y="11.5" text-anchor="middle" fill="rgba(168,230,176,0.85)" font-size="6.5" font-weight="900" font-family="Nunito,sans-serif">$</text>
+                </svg>
                 <span class="banner-stat-value" id="summaryWealth">$457.6</span>
                 <span class="banner-stat-unit">billion</span>
                 <span class="banner-stat-label">total wealth held</span>
@@ -569,7 +547,7 @@
                 <span class="banner-stat-value white" id="budgetMultiple">19.3</span>
                 <span class="banner-stat-unit" style="color: rgba(255,255,255,0.35);">times the state budget</span>
                 <div class="budget-grid" id="budgetGrid"></div>
-                <span class="banner-stat-label"><span style="display:inline-block;width:8px;height:8px;background:rgba(252,196,72,0.8);border-radius:1px;vertical-align:middle;margin-right:3px;"></span> = 1 state budget ($23.7B)</span>
+                <span class="banner-stat-label"><span style="display:inline-block;width:8px;height:8px;background:rgba(252,196,72,0.8);border-radius:50%;vertical-align:middle;margin-right:3px;"></span> = 1 state budget ($23.7B)</span>
             </div>
         </div>
     </div>
@@ -1064,18 +1042,44 @@
             requestAnimationFrame(tick);
         }
 
+        function pieSVG(fill, stroke, sliceColor) {
+            // Full pie with 4 slice lines
+            const c = 8; // center
+            const r = 7; // radius
+            const lines = [0, 90, 180, 270].map(deg => {
+                const rad = (deg - 90) * Math.PI / 180;
+                const x2 = c + r * Math.cos(rad);
+                const y2 = c + r * Math.sin(rad);
+                return `<line x1="${c}" y1="${c}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${sliceColor}" stroke-width="0.5"/>`;
+            }).join('');
+            return `<svg viewBox="0 0 16 16"><circle cx="${c}" cy="${c}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1"/>${lines}</svg>`;
+        }
+
+        function partialPieSVG(fraction) {
+            const c = 8, r = 7;
+            const deg = fraction * 360;
+            const rad = (deg - 90) * Math.PI / 180;
+            const x = c + r * Math.cos(rad);
+            const y = c + r * Math.sin(rad);
+            const large = deg > 180 ? 1 : 0;
+            const path = `M${c},${c} L${c},${c - r} A${r},${r} 0 ${large},1 ${x.toFixed(2)},${y.toFixed(2)} Z`;
+            return `<svg viewBox="0 0 16 16"><circle cx="${c}" cy="${c}" r="${r}" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><path d="${path}" fill="rgba(255,255,255,0.3)"/></svg>`;
+        }
+
         function updateBudgetGrid(multiple) {
             const grid = document.getElementById('budgetGrid');
             const full = Math.floor(multiple);
             const partial = multiple - full;
             let html = '';
             for (let i = 0; i < full; i++) {
-                const cls = i === 0 ? 'budget-block full reference' : 'budget-block full';
-                html += `<div class="${cls}"></div>`;
+                if (i === 0) {
+                    html += `<div class="budget-pie">${pieSVG('rgba(252,196,72,0.75)', 'rgba(252,196,72,0.5)', 'rgba(252,196,72,0.3)')}</div>`;
+                } else {
+                    html += `<div class="budget-pie">${pieSVG('rgba(255,255,255,0.25)', 'rgba(255,255,255,0.15)', 'rgba(255,255,255,0.1)')}</div>`;
+                }
             }
             if (partial > 0.05) {
-                const cls = full === 0 ? 'budget-block partial reference' : 'budget-block partial';
-                html += `<div class="${cls}" style="--fill:${(partial * 100).toFixed(0)}%"></div>`;
+                html += `<div class="budget-pie">${partialPieSVG(partial)}</div>`;
             }
             grid.innerHTML = html;
         }
