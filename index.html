@@ -45,20 +45,21 @@
             letter-spacing: -0.5px;
         }
 
-        .header h1::before {
+        /* Kicker lockup: accent bar → eyebrow → title */
+        .header .kicker::before {
             content: '';
             display: block;
             width: 52px;
             height: 5px;
             border-radius: 3px;
             background: linear-gradient(90deg, #1f5a44, #6abc7a);
-            margin-bottom: 0.9rem;
+            margin-bottom: 0.7rem;
         }
 
-        .header p {
+        .header .kicker {
             color: #5e8268;
             font-size: 0.95rem;
-            margin-top: 0.45rem;
+            margin: 0 0 0.55rem;
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -132,7 +133,7 @@
         .revenue-callout {
             max-width: 960px;
             margin: 0 auto 2.5rem;
-            padding: 1.7rem 2rem 1.6rem;
+            padding: 1.4rem 2rem 1.35rem;
             background:
                 radial-gradient(ellipse 60% 90% at 50% 58%, rgba(106,188,122,0.11) 0%, transparent 72%),
                 linear-gradient(135deg, #e8f0ec 0%, #d4e3da 100%);
@@ -157,7 +158,7 @@
             border-radius: 0 0 3px 3px;
         }
         .revenue-callout-prompt {
-            font-size: 1.02rem;
+            font-size: 1.07rem;
             color: #3a5a4d;
             font-weight: 500;
             line-height: 1.6;
@@ -207,20 +208,19 @@
             text-transform: lowercase;
             letter-spacing: 0.03em;
         }
-        .revenue-callout-unit {
-            display: block;
-            font-size: 0.9rem;
-            color: #5e8268;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin: 0.7rem 0 0;
+        /* Unit lives inside the pill, attached to the number it modifies */
+        .revenue-callout-per {
+            font-size: 1rem;
+            font-weight: 700;
+            color: rgba(168, 230, 176, 0.78);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
         }
         .revenue-callout-context {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: #6b8f71;
-            margin: 0.35rem 0 0;
-            font-style: italic;
+            font-weight: 500;
+            margin: 0.7rem 0 0;
         }
 
         /* Stats row */
@@ -251,10 +251,6 @@
             font-weight: 900;
             line-height: 1.1;
             letter-spacing: -0.5px;
-        }
-
-        .banner-stat-value.white {
-            color: #ffffff;
         }
 
         .banner-stat-unit {
@@ -324,14 +320,16 @@
         .conc-bar {
             display: flex;
             width: 100%;
-            max-width: 150px;
-            height: 9px;
+            max-width: 170px;
+            height: 16px;
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 6px;
-            margin: 0.55rem auto 0.4rem;
+            border-radius: 8px;
+            margin: 0.55rem auto 0.45rem;
             overflow: hidden;
         }
+        /* Segments are interactive in the "all" wealth-by-tier view */
+        .conc-seg { cursor: default; }
         .conc-bar-fill {
             display: block;
             height: 100%;
@@ -380,8 +378,8 @@
         }
 
         .budget-pie {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             position: relative;
         }
 
@@ -811,6 +809,62 @@
         .chart-total.is-past .chart-total-label { background: #eef2f0; color: #8fa89a; }
         .chart-total.is-past .chart-total-value { background: #6b8f71; }
 
+        /* ── Wealth-by-tier segment hover tooltip (light card on the dark banner) ── */
+        .tier-tip {
+            position: fixed;
+            z-index: 300;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -100%);
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 0.45rem 0.7rem 0.5rem;
+            box-shadow: 0 10px 26px rgba(15, 41, 34, 0.4);
+            font-family: 'Nunito', system-ui, sans-serif;
+            white-space: nowrap;
+            transition: opacity 0.12s ease;
+        }
+        .tier-tip::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #ffffff;
+        }
+        .tier-tip-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .tier-tip-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(26, 60, 52, 0.18);
+        }
+        .tier-tip-name {
+            font-weight: 800;
+            font-size: 0.82rem;
+            color: #1a3c34;
+        }
+        .tier-tip-amt {
+            display: block;
+            margin-top: 0.18rem;
+            font-weight: 800;
+            font-size: 0.98rem;
+            color: #1f5a44;
+            letter-spacing: -0.01em;
+        }
+        .tier-tip-pct {
+            color: #6b8f71;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
         /* ── Custom HTML chart tooltip ── */
         .chart-tooltip {
             position: absolute;
@@ -927,8 +981,7 @@
                 padding: 0.4rem 1rem;
             }
             .header { padding-left: 0; text-align: center; }
-            .header h1::before { margin-left: auto; margin-right: auto; }
-            .header p { margin-left: 0; }
+            .header .kicker::before { margin-left: auto; margin-right: auto; }
             .map-embed-wrapper {
                 aspect-ratio: 4 / 5;
             }
@@ -950,8 +1003,8 @@
 </head>
 <body>
     <div class="header">
+        <p class="kicker">Data Breakdown</p>
         <h1>Millionaires in Hawaiʻi</h1>
-        <p style="margin-left: 1.5rem;">Data Breakdown</p>
     </div>
 
     <!-- Infographic Banner -->
@@ -1008,10 +1061,10 @@
             </div>
             <div class="banner-divider"></div>
             <div class="banner-stat">
-                <span class="banner-stat-value white" id="budgetMultiple">19.3</span>
-                <span class="banner-stat-unit" style="color: rgba(255,255,255,0.35);">times the state budget</span>
+                <span class="banner-stat-value" id="budgetMultiple">19.3</span>
+                <span class="banner-stat-unit">times the state budget</span>
                 <div class="budget-grid" id="budgetGrid"></div>
-                <span class="banner-stat-label"><span style="display:inline-block;width:8px;height:8px;background:rgba(252,196,72,0.8);border-radius:50%;vertical-align:middle;margin-right:3px;"></span> = 1 state budget ($23.7B &middot; 2026)
+                <span class="banner-stat-label"><span style="display:inline-block;width:8px;height:8px;background:rgba(252,196,72,0.8);border-radius:50%;vertical-align:middle;margin-right:3px;"></span> = 1 state budget <span style="white-space:nowrap;">($23.7B &middot; 2026)</span>
             </div>
         </div>
     </div>
@@ -1027,10 +1080,10 @@
                 <span class="revenue-callout-connector">to</span>
                 <span id="revenueHigh">$915M</span>
             </span>
+            <span class="revenue-callout-per">/ year</span>
         </div>
-        <p class="revenue-callout-unit">per year</p>
         <p class="revenue-callout-context">
-            <span id="revenueBudgetPct">1.9% &ndash; 3.9%</span> of Hawaiʻi&rsquo;s annual state budget
+            &asymp; <span id="revenueBudgetPct">1.9% &ndash; 3.9%</span> of Hawaiʻi&rsquo;s annual state budget
         </p>
     </div>
 
@@ -1046,7 +1099,7 @@
         </div>
         <div class="map-embed-wrapper">
             <iframe
-                src="https://dtomkatsu.github.io/hawaii-appleseed-dashboard/?var=millionaires"
+                src="https://dtomkatsu.github.io/hawaii-appleseed-dashboard/?var=millionaires&amp;embed=1"
                 title="Map of millionaire locations in Hawaiʻi"
                 loading="lazy"
                 allow="fullscreen"
@@ -1121,6 +1174,9 @@
             <span class="narrative-source">Source: <a href="https://www.hitaxfairness.org/capital-gains" target="_blank">HI Tax Fairness Coalition &mdash; Capital Gains Tax Reform</a></span>
         </div>
     </div>
+
+    <!-- Wealth-by-tier segment hover tooltip -->
+    <div class="tier-tip" id="tierTip" role="status" aria-hidden="true"></div>
 
     <!-- Tax Popup -->
     <div class="tax-popup" id="taxPopup">
@@ -1676,7 +1732,7 @@
             const y = c + r * Math.sin(rad);
             const large = deg > 180 ? 1 : 0;
             const path = `M${c},${c} L${c},${c - r} A${r},${r} 0 ${large},1 ${x.toFixed(2)},${y.toFixed(2)} Z`;
-            return `<svg viewBox="0 0 16 16"><circle cx="${c}" cy="${c}" r="${r}" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><path d="${path}" fill="rgba(255,255,255,0.3)"/></svg>`;
+            return `<svg viewBox="0 0 16 16"><circle cx="${c}" cy="${c}" r="${r}" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/><path d="${path}" fill="rgba(255,255,255,0.22)"/></svg>`;
         }
 
         function updateBudgetGrid(multiple) {
@@ -1688,7 +1744,7 @@
                 if (i === 0) {
                     html += `<div class="budget-pie">${pieSVG('rgba(252,196,72,0.75)', 'rgba(252,196,72,0.5)', 'rgba(252,196,72,0.3)')}</div>`;
                 } else {
-                    html += `<div class="budget-pie">${pieSVG('rgba(255,255,255,0.25)', 'rgba(255,255,255,0.15)', 'rgba(255,255,255,0.1)')}</div>`;
+                    html += `<div class="budget-pie">${pieSVG('rgba(255,255,255,0.18)', 'rgba(255,255,255,0.10)', 'rgba(255,255,255,0.07)')}</div>`;
                 }
             }
             if (partial > 0.05) {
@@ -1769,10 +1825,15 @@
             if (isAllTiers) {
                 const shares = TIER_RAMP.map(t => ({ ...t, pct: summaryMapping[t.key].wealth / allWealth * 100 }));
                 concValueEl.style.display = 'none';
+                // Bar leads as the column's "figure" so all three stats share the
+                // same rhythm: figure → caps label → caption.
+                concBarEl.style.order = '-1';
                 concUnitEl.textContent = 'wealth by tier';
-                concBarEl.innerHTML = shares.map(s =>
-                    '<span class="conc-seg" style="width:' + s.pct.toFixed(1) + '%;background:' + s.color + '"></span>'
-                ).join('');
+                concBarEl.innerHTML = shares.map(s => {
+                    const millions = '$' + Math.round(summaryMapping[s.key].wealth * 1000).toLocaleString() + 'M';
+                    return '<span class="conc-seg" style="width:' + s.pct.toFixed(1) + '%;background:' + s.color + '"'
+                        + ' data-tier="' + s.label + '" data-amt="' + millions + '" data-pct="' + Math.round(s.pct) + '" data-color="' + s.color + '"></span>';
+                }).join('');
                 concLabelEl.innerHTML = shares.map(s =>
                     '<span class="conc-key"><span class="conc-key-dot" style="background:' + s.color + '"></span>' + Math.round(s.pct) + '%</span>'
                 ).join('');
@@ -1783,6 +1844,7 @@
                 const color = ramp ? ramp.color : '#6abc7a';
                 concValueEl.style.display = '';
                 concValueEl.textContent = Math.round(share) + '%';
+                concBarEl.style.order = '';
                 concUnitEl.textContent = 'of all wealth';
                 concBarEl.innerHTML = '<span class="conc-bar-fill" style="width:' + share.toFixed(1) + '%;background:' + color + '"></span>';
                 concLabelEl.textContent = 'held by the ' + tierKey + ' tier';
@@ -1857,6 +1919,36 @@
                 });
             }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
             targets.forEach(el => io.observe(el));
+        })();
+
+        // ── Wealth-by-tier bar: hover a segment to see its exact wealth ──
+        // Delegated on the (persistent) #concBar container; segments are
+        // rebuilt by updateSummary but carry data-* the tooltip reads.
+        (function () {
+            const bar = document.getElementById('concBar');
+            const tip = document.getElementById('tierTip');
+            if (!bar || !tip) return;
+            function place(seg) {
+                tip.innerHTML =
+                    '<span class="tier-tip-row">' +
+                        '<span class="tier-tip-dot" style="background:' + seg.dataset.color + '"></span>' +
+                        '<span class="tier-tip-name">' + seg.dataset.tier + '</span>' +
+                    '</span>' +
+                    '<span class="tier-tip-amt">' + seg.dataset.amt +
+                        ' <span class="tier-tip-pct">&middot; ' + seg.dataset.pct + '%</span></span>';
+                const r = seg.getBoundingClientRect();
+                tip.style.left = (r.left + r.width / 2) + 'px';
+                tip.style.top = (r.top - 8) + 'px';
+                tip.style.opacity = '1';
+            }
+            const onMove = (e) => {
+                const seg = e.target.closest('.conc-seg');
+                if (seg && seg.dataset.tier) place(seg);
+                else tip.style.opacity = '0';
+            };
+            bar.addEventListener('mouseover', onMove);
+            bar.addEventListener('mousemove', onMove);
+            bar.addEventListener('mouseleave', () => { tip.style.opacity = '0'; });
         })();
     </script>
 </body>
